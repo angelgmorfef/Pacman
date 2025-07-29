@@ -1,14 +1,14 @@
 class Pacman {
-    constructor(x, y ,ancho, alto, velocidad){
+    constructor(x, y ,width, height, velocidad){
         this.x = x;
         this.y = y;
-        this.ancho = ancho;
-        this.alto = alto;
+        this.width = width;
+        this.height = height;
         this.velocidad = velocidad;
         this.direccion = 4;
+        this.NuevaDireccion = this.direccion;
         this.FrameActual= 1;
         this.ContadorFrame = 7;
-
         setInterval(() => {
         this.cambioanimacion();
         }, 100);
@@ -26,7 +26,7 @@ class Pacman {
     comer(){}
 
     adelante(){
-    switch (this.direccion) {
+        switch (this.direccion) {
         case direccion_derecha:
             this.x += this.velocidad;
             break;
@@ -43,7 +43,7 @@ class Pacman {
     }
 
     atras(){
-    switch (this.direccion) {
+        switch (this.direccion) {
         case direccion_derecha: // Right
             this.x -= this.velocidad;
             break;
@@ -68,32 +68,70 @@ class Pacman {
         {
         colisionado = true;
         }
-        return false;
+        return colisionado;
     }
 
     colosionghost(){}
 
-    cambiodireccion(){}
-
-    cambioanimacion(){
-        this.FrameActual == this.FrameActual == this.ContadorFrame ? 1 : this.FrameActual + 1;
+    cambiodireccion(){
+        if (this.direccion == this.NuevaDireccion) return;
+        let tempDirection = this.direccion;
+        this.direccion = this.NuevaDireccion;
+        this.adelante();
+        if (this.colision()) {
+            this.atras();
+            this.direccion = tempDirection;
+        } else {
+            this.atras();
+        }
     }
 
-    dibujar(){}
+    cambioanimacion(){
+        this.FrameActual = this.FrameActual == this.ContadorFrame ? 1 : this.FrameActual + 1;
+    }
+
+    dibujar() {
+        canvasContenido.save();
+        canvasContenido.translate(
+            this.x + Bloques / 2,
+            this.y + Bloques / 2
+        );
+        canvasContenido.rotate((this.direccion * 90 * Math.PI) / 180);
+        canvasContenido.translate(
+            -this.x - Bloques / 2,
+            -this.y - Bloques / 2
+        );
+        canvasContenido.drawImage(
+            pacmanFrames,
+            (this.FrameActual - 1) * Bloques,
+            0,
+            Bloques,
+            Bloques,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
+        canvasContenido.restore();
+    }
 
     mapaaEjex(){
-        return parseInt(this.x / Bloques);
+        let mapX = parseInt(this.x / Bloques);
+        return mapX;
     }
 
     mapaaEjey(){
-        return parseInt(this.y / Bloques);
+        let mapY = parseInt(this.y / Bloques);
+        return mapY;
     }
 
     direccionmapaaEjex(){
-        return parseInt((this.x + 0.9999 * Bloques) / Bloques);
+        let mapX = parseInt((this.x + 0.99 * Bloques) / Bloques);
+        return mapX;
     }
 
     direccionmapaaEjey(){
-        return parseInt((this.y + 0.9999 * Bloques) / Bloques);
+        let mapY = parseInt((this.y + 0.99 * Bloques) / Bloques);
+        return mapY;
     }
 }
