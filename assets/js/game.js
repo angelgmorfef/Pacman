@@ -14,17 +14,27 @@ let Bloques = 20;
 let EspacioMuros = Bloques / 1.5;
 let SinMuros = (Bloques-EspacioMuros)/2;
 let MurodeColor = "black";
+let score = 0;
+let fantasmas = [];
+let contadorFantasma = 4;
 
 const direccion_derecha = 4;
 const direccion_arriba = 3;
 const direccion_izquierda = 2;
 const direccion_abajo = 1;
 
+let UbicacionFantasmas = [
+    { x: 0, y: 0 },
+    { x: 176, y: 0 },
+    { x: 0, y: 121 },
+    { x: 176, y: 121 },
+]
+
 let mapa = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-    [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
-    [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+    [1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1],
     [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
     [1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1],
     [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
@@ -47,6 +57,16 @@ let mapa = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
+let objetivosRandom = [
+    { x: 1 * Bloques, y: 1 * Bloques },
+    { x: 1 * Bloques, y: (mapa.length - 2) * Bloques },
+    { x: (mapa[0].length - 2) * Bloques, y: 1 * Bloques },
+    {
+        x: (mapa[0].length - 2) * Bloques,
+        y: (mapa.length - 2) * Bloques,
+    },
+];
+
 let gameloop = () =>{
     update();
     dibujar();
@@ -54,12 +74,48 @@ let gameloop = () =>{
 
 let update = () => {
     pacman.movimiento();
+    pacman.comer();
+}
+
+let comida = () => {
+    for (let i = 0; i < mapa.length; i++) {
+        for (let j = 0; j < mapa[0].length; j++) {
+            if (mapa[i][j] == 2) {
+                createRect(
+                    j * Bloques + Bloques / 3,
+                    i * Bloques + Bloques / 3,
+                    Bloques / 3,
+                    Bloques / 3,
+                    "#FEB897"
+                );
+            }
+        }
+    }
+}
+
+let Record = () => {
+    canvasContenido.font = "20px Emulogic";
+    canvasContenido.fillStyle = "white";
+    canvasContenido.fillText(
+        "Score: " + score,
+        0,
+        Bloques * (mapa.length + 1) + 10
+    );
+}
+
+let dibujarFantasmas = () => {
+    for (let i = 0; i < fantasmas.length; i++) {
+    fantasmas[i].dibujar();
+    }
 }
 
 let dibujar = () => {
     createRect(0, 0, canvas.width, canvas.height, "black");
     DiseMuros();
+    comida();
+    Record();
     pacman.dibujar();
+    dibujarFantasmas();
 }
 
 let gameInterval = setInterval(gameloop, 1000 / fps);
@@ -129,8 +185,27 @@ let NuevoPacman = () => {
     );
 };
 
-NuevoPacman();
+let Fantasmas = () => {
+    fantasmas = [];
+    for (let i = 0; i < contadorFantasma; i++) {
+        let newFantasma = new Fantasma(
+            9 * Bloques + (i % 2 == 0 ? 0 : 1) * Bloques,
+            10 * Bloques + (i % 2 == 0 ? 0 : 1) * Bloques,
+            Bloques,
+            Bloques,
+            pacman.velocidad / 2,
+            UbicacionFantasmas[i % 4].x,
+            UbicacionFantasmas[i % 4].y,
+            124,
+            116,
+            6 + i
+        );
+        fantasmas.push(newFantasma);
+    }
+};
 
+NuevoPacman();
+Fantasmas();
 gameloop();
 
 window.addEventListener("keydown", (event) => {

@@ -23,7 +23,20 @@ class Pacman {
         }
     }
 
-    comer(){}
+    comer(){
+        for (let i = 0; i < mapa.length; i++) {
+            for (let j = 0; j < mapa[0].length; j++) {
+                if (
+                    mapa[i][j] == 2 &&
+                    this.mapaaEjex() == j &&
+                    this.mapaaEjey() == i
+                ) {
+                    mapa[i][j] = 3;
+                    score++;
+                }
+            }
+        }
+    }
 
     adelante(){
         switch (this.direccion) {
@@ -75,12 +88,12 @@ class Pacman {
 
     cambiodireccion(){
         if (this.direccion == this.NuevaDireccion) return;
-        let tempDirection = this.direccion;
+        let direccionTemporal = this.direccion;
         this.direccion = this.NuevaDireccion;
         this.adelante();
         if (this.colision()) {
             this.atras();
-            this.direccion = tempDirection;
+            this.direccion = direccionTemporal;
         } else {
             this.atras();
         }
