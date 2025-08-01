@@ -17,6 +17,8 @@ let MurodeColor = "black";
 let score = 0;
 let fantasmas = [];
 let contadorFantasma = 4;
+let vidas = 3;
+let contadordeComida = 0;
 
 const direccion_derecha = 4;
 const direccion_arriba = 3;
@@ -57,6 +59,8 @@ let mapa = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
+
+
 let objetivosRandom = [
     { x: 1 * Bloques, y: 1 * Bloques },
     { x: 1 * Bloques, y: (mapa.length - 2) * Bloques },
@@ -67,15 +71,60 @@ let objetivosRandom = [
     },
 ];
 
-let gameloop = () =>{
-    update();
+let gameloop = () => {
     dibujar();
+    update();
 };
 
 let update = () => {
     pacman.movimiento();
     pacman.comer();
+    updateGhosts();
+    if (pacman.colosionfantasmas(fantasmas)) {
+        reiniciarpartida();
+    }
 }
+
+
+let reiniciarpartida = () => {
+    NuevoPacman();
+    Fantasmas();
+    vidas--;
+    if (vidas == 0) {
+        FindelJuego();
+    }
+}
+
+let LasVidas = () => {
+    canvasContenido.font = "20px Emulogic";
+    canvasContenido.fillStyle = "white";
+    canvasContenido.fillText("Lives:", 290, 500, Bloques * (mapa.length + 1));
+
+    for (let i = 0; i < vidas; i++) {
+        canvasContenido.drawImage(
+            pacmanFrames,
+            2 * Bloques,
+            0,
+            Bloques,
+            Bloques,
+            350 + i * Bloques,
+            Bloques * mapa.length + 2,
+            Bloques,
+            Bloques
+        );
+    }
+};
+
+let FindelJuego = () => {
+    gameover();
+    clearInterval(gameInterval);
+}
+
+let gameover = () => {
+    canvasContenido.font = "80px Emulogic";
+    canvasContenido.fillStyle = "white";
+    canvasContenido.fillText("Fin del Juego", 0, 250);
+};
 
 let comida = () => {
     for (let i = 0; i < mapa.length; i++) {
@@ -98,7 +147,7 @@ let Record = () => {
     canvasContenido.fillStyle = "white";
     canvasContenido.fillText(
         "Score: " + score,
-        0,
+        10, 500,
         Bloques * (mapa.length + 1) + 10
     );
 }
@@ -110,12 +159,14 @@ let dibujarFantasmas = () => {
 }
 
 let dibujar = () => {
+    canvasContenido.clearRect(0, 0, canvas.width, canvas.height);
     createRect(0, 0, canvas.width, canvas.height, "black");
     DiseMuros();
     comida();
     Record();
     pacman.dibujar();
     dibujarFantasmas();
+    LasVidas();
 }
 
 let gameInterval = setInterval(gameloop, 1000 / fps);

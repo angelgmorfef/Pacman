@@ -20,7 +20,7 @@ class Fantasma {
 
     direccionRandom() {
     let addition = 1;
-    this.objetivosRandomIndex += 1;
+    this.objetivosRandomIndex += addition;
     this.objetivosRandomIndex = this.objetivosRandomIndex % 4;
     }
 
@@ -112,79 +112,79 @@ class Fantasma {
         return false;
     }
 
-    NuevaDireccion(mapa, objetivoX, objetivoY){
-       let mp = [];
+    NuevaDireccion(mapa, objetivoX, objetivoY) {
+        let mp = [];
         for (let i = 0; i < mapa.length; i++) {
             mp[i] = mapa[i].slice();
         }
 
-        let ruta = [
+        let vecinos = [
             {
-                x: this.getMapX(),
-                y: this.getMapY(),
-                rightX: this.getMapXRightSide(),
-                rightY: this.getMapYRightSide(),
+                x: this.mapaaEjex(),
+                y: this.mapaaEjey(),
+                rightX: this.direccionmapaaEjex(),
+                rightY: this.direccionmapaaEjey(),
                 moves: [],
             },
         ];
-        while (ruta.length > 0) {
-            let poped = ruta.shift();
-            if (poped.x == destX && poped.y == destY) {
+        while (vecinos.length > 0) {
+            let poped = vecinos.shift();
+            if (poped.x == objetivoX && poped.y == objetivoY) {
                 return poped.moves[0];
             } else {
                 mp[poped.y][poped.x] = 1;
-                let neighborList = this.addNeighbors(poped, mp);
-                for (let i = 0; i < neighborList.length; i++) {
-                    ruta.push(neighborList[i]);
+                let listadevecinos = this.AggregarVecinos(poped, mp);
+                for (let i = 0; i < listadevecinos.length; i++) {
+                    vecinos.push(listadevecinos[i]);
                 }
             }
         }
 
-        return 1;   
+        return 1; 
     }
 
-    AggregarVecinos(poped, mapa){
+    AggregarVecinos(poped, mp){
         let vecinos = [];
-        let numOfRows = mp.length;
-        let numOfColumns = mp[0].length;
+        let numeroFilas = mp.length;
+        let numeroColumnas = mp[0].length;
 
         if (
             poped.x - 1 >= 0 &&
-            poped.x - 1 < numOfRows &&
+            poped.x - 1 < numeroFilas &&
             mp[poped.y][poped.x - 1] != 1
         ) {
-            let tempMoves = poped.moves.slice();
-            tempMoves.push(DIRECTION_LEFT);
-            ruta.push({ x: poped.x - 1, y: poped.y, moves: tempMoves });
+            let direccionTemporal = poped.moves.slice();
+            direccionTemporal.push(direccion_izquierda);
+            vecinos.push({ x: poped.x - 1, y: poped.y, moves: direccionTemporal });
         }
         if (
             poped.x + 1 >= 0 &&
-            poped.x + 1 < numOfRows &&
+            poped.x + 1 < numeroFilas &&
             mp[poped.y][poped.x + 1] != 1
         ) {
-            let tempMoves = poped.moves.slice();
-            tempMoves.push(DIRECTION_RIGHT);
-            ruta.push({ x: poped.x + 1, y: poped.y, moves: tempMoves });
+            let direccionTemporal = poped.moves.slice();
+            direccionTemporal.push(direccion_derecha);
+            vecinos.push({ x: poped.x + 1, y: poped.y, moves: direccionTemporal });
         }
         if (
             poped.y - 1 >= 0 &&
-            poped.y - 1 < numOfColumns &&
+            poped.y - 1 < numeroColumnas &&
             mp[poped.y - 1][poped.x] != 1
         ) {
-            let tempMoves = poped.moves.slice();
-            tempMoves.push(DIRECTION_UP);
-            ruta.push({ x: poped.x, y: poped.y - 1, moves: tempMoves });
+            let direccionTemporal = poped.moves.slice();
+            direccionTemporal.push(direccion_arriba);
+            vecinos.push({ x: poped.x, y: poped.y - 1, moves: direccionTemporal });
         }
         if (
             poped.y + 1 >= 0 &&
-            poped.y + 1 < numOfColumns &&
+            poped.y + 1 < numeroColumnas &&
             mp[poped.y + 1][poped.x] != 1
         ) {
-            let tempMoves = poped.moves.slice();
-            tempMoves.push(DIRECTION_BOTTOM);
-            ruta.push({ x: poped.x, y: poped.y + 1, moves: tempMoves });
+            let direccionTemporal = poped.moves.slice();
+            direccionTemporal.push(direccion_abajo);
+            vecinos.push({ x: poped.x, y: poped.y + 1, moves: direccionTemporal });
         }
-        return ruta;
+        return vecinos;
     }
 
     cambiodireccion(){
@@ -243,3 +243,9 @@ class Fantasma {
         return mapY;
     }
 }
+
+let updateGhosts = () => {
+    for (let i = 0; i < fantasmas.length; i++) {
+        fantasmas[i].movimiento();
+    }
+};

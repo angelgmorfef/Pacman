@@ -84,7 +84,18 @@ class Pacman {
         return colisionado;
     }
 
-    colosionghost(){}
+    colosionfantasmas(fantasmas){
+        for (let i = 0; i < fantasmas.length; i++) {
+            let fantasma = fantasmas[i];
+            if (
+                fantasma.mapaaEjex() == this.mapaaEjex() &&
+                fantasma.mapaaEjey() == this.mapaaEjey()
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     cambiodireccion(){
         if (this.direccion == this.NuevaDireccion) return;
@@ -103,6 +114,27 @@ class Pacman {
         this.FrameActual = this.FrameActual == this.ContadorFrame ? 1 : this.FrameActual + 1;
     }
 
+    mapaaEjex(){
+        let mapX = parseInt(this.x / Bloques);
+        return mapX;
+    }
+
+    mapaaEjey(){
+        let mapY = parseInt(this.y / Bloques);
+        return mapY;
+    }
+
+    direccionmapaaEjex(){
+        let mapX = parseInt((this.x + 0.99 * Bloques) / Bloques);
+        return mapX;
+    }
+
+    direccionmapaaEjey(){
+        let mapY = parseInt((this.y + 0.99 * Bloques) / Bloques);
+        return mapY;
+    }
+
+    
     dibujar() {
         canvasContenido.save();
         canvasContenido.translate(
@@ -127,24 +159,5 @@ class Pacman {
         );
         canvasContenido.restore();
     }
-
-    mapaaEjex(){
-        let mapX = parseInt(this.x / Bloques);
-        return mapX;
-    }
-
-    mapaaEjey(){
-        let mapY = parseInt(this.y / Bloques);
-        return mapY;
-    }
-
-    direccionmapaaEjex(){
-        let mapX = parseInt((this.x + 0.99 * Bloques) / Bloques);
-        return mapX;
-    }
-
-    direccionmapaaEjey(){
-        let mapY = parseInt((this.y + 0.99 * Bloques) / Bloques);
-        return mapY;
-    }
 }
+
