@@ -25,13 +25,6 @@ const direccion_arriba = 3;
 const direccion_izquierda = 2;
 const direccion_abajo = 1;
 
-let UbicacionFantasmas = [
-    { x: 0, y: 0 },
-    { x: 176, y: 0 },
-    { x: 0, y: 121 },
-    { x: 176, y: 121 },
-]
-
 let mapa = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
@@ -44,7 +37,7 @@ let mapa = [
     [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1],
-    [2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+    [1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1],
     [1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
@@ -59,17 +52,19 @@ let mapa = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
-
-
 let objetivosRandom = [
     { x: 1 * Bloques, y: 1 * Bloques },
     { x: 1 * Bloques, y: (mapa.length - 2) * Bloques },
     { x: (mapa[0].length - 2) * Bloques, y: 1 * Bloques },
-    {
-        x: (mapa[0].length - 2) * Bloques,
-        y: (mapa.length - 2) * Bloques,
-    },
+    { x: (mapa[0].length - 2) * Bloques, y: (mapa.length - 2) * Bloques },
 ];
+
+let UbicacionFantasmas = [
+    { x: 0, y: 0 },
+    { x: 176, y: 0 },
+    { x: 0, y: 121 },
+    { x: 176, y: 121 },
+]
 
 let gameloop = () => {
     dibujar();
@@ -80,11 +75,15 @@ let update = () => {
     pacman.movimiento();
     pacman.comer();
     updateGhosts();
+
     if (pacman.colosionfantasmas(fantasmas)) {
         reiniciarpartida();
     }
+    if (score == contadordeComida){
+        Ganaste();
+        clearInterval(gameInterval);
+    }
 }
-
 
 let reiniciarpartida = () => {
     NuevoPacman();
@@ -125,6 +124,12 @@ let gameover = () => {
     canvasContenido.fillStyle = "white";
     canvasContenido.fillText("Fin del Juego", 0, 250);
 };
+
+let Ganaste = () => {
+    canvasContenido.font = "80px Emulogic";
+    canvasContenido.fillStyle = "white";
+    canvasContenido.fillText("Ganaste", 80, 250);
+}
 
 let comida = () => {
     for (let i = 0; i < mapa.length; i++) {

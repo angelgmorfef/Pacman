@@ -12,16 +12,15 @@ class Fantasma {
         this.imgAlto = imgAlto;
         this.rango = rango;
         this.objetivosRandomIndex = parseInt(Math.random() * 4);
-
+        this.objetivo = objetivosRandom[this.objetivosRandomIndex];
         setInterval(() => {
         this.direccionRandom();
-        }, 100);
+        }, 10000);
     }
 
     direccionRandom() {
-    let addition = 1;
-    this.objetivosRandomIndex += addition;
-    this.objetivosRandomIndex = this.objetivosRandomIndex % 4;
+        this.objetivosRandomIndex += 1;
+        this.objetivosRandomIndex = this.objetivosRandomIndex % 4;
     }
 
     movimiento(){
@@ -30,7 +29,6 @@ class Fantasma {
         }else{
             this.objetivo = objetivosRandom[this.objetivosRandomIndex];
         }
-
         this.cambiodireccion();
         this.adelante();
         if (this.colision()) {
@@ -39,33 +37,18 @@ class Fantasma {
         }
     }
 
-    comer(){
-        for (let i = 0; i < mapa.length; i++) {
-            for (let j = 0; j < mapa[0].length; j++) {
-                if (
-                    mapa[i][j] == 2 &&
-                    this.mapaaEjex() == j &&
-                    this.mapaaEjey() == i
-                ) {
-                    mapa[i][j] = 3;
-                    score++;
-                }
-            }
-        }
-    }
-
     adelante(){
         switch (this.direccion) {
         case direccion_derecha:
             this.x += this.velocidad;
             break;
-        case direccion_arriba: // Up
+        case direccion_arriba: 
             this.y -= this.velocidad;
             break;
-        case direccion_izquierda: // Left
+        case direccion_izquierda: 
             this.x -= this.velocidad;
             break;
-        case direccion_abajo: // Bottom
+        case direccion_abajo: 
             this.y += this.velocidad;
             break;
         }
@@ -73,16 +56,16 @@ class Fantasma {
 
     atras(){
         switch (this.direccion) {
-        case direccion_derecha: // Right
+        case direccion_derecha: 
             this.x -= this.velocidad;
             break;
-        case direccion_arriba: // Up
+        case direccion_arriba: 
             this.y += this.velocidad;
             break;
-        case direccion_izquierda: // Left
+        case direccion_izquierda: 
             this.x += this.velocidad;
             break;
-        case direccion_abajo: // Bottom
+        case direccion_abajo: 
             this.y -= this.velocidad;
             break;
         }
@@ -90,17 +73,16 @@ class Fantasma {
 
     colision(){
     let colisionado = false;
-        if (mapa[parseInt(this.y / Bloques)][parseInt(this.x / Bloques)] == 1 ||
+        if (
+            mapa[parseInt(this.y / Bloques)]        [parseInt(this.x / Bloques)] == 1 ||
             mapa[parseInt(this.y / Bloques + 0.9999)][parseInt(this.x / Bloques)] == 1 ||
             mapa[parseInt(this.y / Bloques)][parseInt(this.x / Bloques + 0.9999)] == 1 ||
-            mapa[parseInt(this.y / Bloques + 0.9999)][parseInt(this.x / Bloques + 0.9999)] == 1)
-        {
+            mapa[parseInt(this.y / Bloques + 0.9999)][parseInt(this.x / Bloques + 0.9999)] == 1
+        ) {
         colisionado = true;
         }
         return colisionado;
     }
-
-    colosionghost(){}
 
     RangoconPacman(){
         let distanciaX = Math.abs(pacman.mapaaEjex() - this.mapaaEjex());
@@ -110,6 +92,40 @@ class Fantasma {
             return true;
             }
         return false;
+    }
+
+    cambiodireccion() {
+        let direccionTemporal = this.direccion;
+        this.direccion = this.NuevaDireccion(
+            mapa,
+            parseInt(this.objetivo.x / Bloques),
+            parseInt(this.objetivo.y / Bloques)
+        );
+        if (typeof this.direccion == "undefined") {
+            this.direccion = direccionTemporal;
+            return;
+        }
+        if (
+            this.mapaaEjey() != this.direccionmapaaEjey() &&
+            (this.direccion == direccion_izquierda ||
+                this.direccion == direccion_derecha)
+        ) {
+            this.direccion = direccion_arriba;
+        }
+        if (
+            this.mapaaEjex() != this.direccionmapaaEjex() &&
+            this.direccion == direccion_arriba
+        ) {
+            this.direccion = direccion_izquierda;
+        }
+        this.adelante();
+        if (this.colision()) {
+            this.atras();
+            this.direccion = direccionTemporal;
+        } else {
+            this.atras();
+        }
+        console.log(this.direccion);
     }
 
     NuevaDireccion(mapa, objetivoX, objetivoY) {
@@ -139,7 +155,6 @@ class Fantasma {
                 }
             }
         }
-
         return 1; 
     }
 
@@ -187,26 +202,6 @@ class Fantasma {
         return vecinos;
     }
 
-    cambiodireccion(){
-    let direccionTemporal = this.direccion;
-
-        this.direccion = this.NuevaDireccion(
-            mapa, parseInt(this.objetivo.x / Bloques), parseInt(this.objetivo.y / Bloques),
-        );
-
-        this.adelante();
-        if (this.colision()) {
-            this.atras();
-            this.direccion = direccionTemporal;
-        } else {
-            this.atras();
-        }
-    }
-
-    cambioanimacion(){
-        this.FrameActual = this.FrameActual == this.ContadorFrame ? 1 : this.FrameActual + 1;
-    }
-
     dibujar() {
         canvasContenido.save();
         canvasContenido.drawImage(
@@ -221,6 +216,10 @@ class Fantasma {
             this.height
         );
         canvasContenido.restore();
+        canvasContenido.beginPath();
+        canvasContenido.strokeStyle = "red";
+        canvasContenido.arc(this.x + Bloques / 2, this.y + Bloques / 2, this.rango * Bloques, 0, Math.PI * 2);
+        //canvasContenido.stroke();
     }
 
     mapaaEjex(){
