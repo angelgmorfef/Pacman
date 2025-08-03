@@ -15,7 +15,7 @@ class Fantasma {
         this.objetivo = objetivosRandom[this.objetivosRandomIndex];
         setInterval(() => {
         this.direccionRandom();
-        }, 10000);
+        }, 3000);
     }
 
     direccionRandom() {
@@ -218,7 +218,11 @@ class Fantasma {
         canvasContenido.restore();
         canvasContenido.beginPath();
         canvasContenido.strokeStyle = "red";
-        canvasContenido.arc(this.x + Bloques / 2, this.y + Bloques / 2, this.rango * Bloques, 0, Math.PI * 2);
+        canvasContenido.arc(
+            this.x + Bloques / 2, 
+            this.y + Bloques / 2, 
+            this.rango * Bloques, 0, Math.PI * 2
+        );
         //canvasContenido.stroke();
     }
 

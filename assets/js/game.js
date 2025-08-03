@@ -11,14 +11,14 @@ let createRect = (x, y, width, height, color) => {
 let fps = 30;
 let pacman;
 let Bloques = 20;
-let EspacioMuros = Bloques / 1.5;
+let EspacioMuros = Bloques / 1.6;
 let SinMuros = (Bloques-EspacioMuros)/2;
 let MurodeColor = "black";
 let score = 0;
 let fantasmas = [];
 let contadorFantasma = 4;
 let vidas = 3;
-let contadordeComida = 0;
+let contadordeComida = 226;
 
 const direccion_derecha = 4;
 const direccion_arriba = 3;
@@ -254,7 +254,7 @@ let Fantasmas = () => {
             UbicacionFantasmas[i % 4].y,
             124,
             116,
-            6 + i
+            10 + i
         );
         fantasmas.push(newFantasma);
     }
